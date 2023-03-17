@@ -1,0 +1,7 @@
+{
+    "python.testing.pytestArgs": [
+        "test_muzero","test_tonic"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
+}
