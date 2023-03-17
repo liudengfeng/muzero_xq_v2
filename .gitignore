@@ -127,3 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+*videos*/
+mcts_tree/
+demo_videos/
+temp*.*
+*.dat
+*.pth
+*.checkpoint
+report.html
