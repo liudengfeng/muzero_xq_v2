@@ -95,7 +95,7 @@ if __name__ == "__main__":
         "--num_workers",
         type=int,
         # default=os.cpu_count() - 2,
-        default=16,
+        default=15,
         help="Number of self play actors running concurrently (default: %(default)s)",
     )
     parser.add_argument(
@@ -121,7 +121,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--training_steps",
         type=int,
-        default=10000,
+        default=140000,
         help="Experiment serial number (default: %(default)s)",
     )
     parser.add_argument(
@@ -133,13 +133,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--debug_mcts",
         action="store_true",
-        default=True,
+        default=False,
         help="是否显示MCTS搜索树。正式环境下应设置`False` (default: %(default)s)",
     )
     parser.add_argument(
         "--debug_duration",
         action="store_true",
-        default=True,
+        default=False,
         help="是否显示每次MCTS搜索用时。正式环境下应设置`False` (default: %(default)s)",
     )
     args = parser.parse_args()
