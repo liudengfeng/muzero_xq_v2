@@ -136,3 +136,4 @@ temp*.*
 *.pth
 *.checkpoint
 report.html
+demo_mcts_tree/
