@@ -25,6 +25,7 @@ def test_inference(expected):
     encoded_action_shape = (workers, 2, NUM_ROW, NUM_COL)
     action_size = len(config.action_space)
     model = MuZeroNetwork(config)
+    model = torch.compile(model)
     observations = torch.rand(
         (workers, PLANE_NUM, NUM_ROW, NUM_COL), dtype=torch.float32
     )
@@ -59,6 +60,7 @@ def test_loss_function():
     encoded_action_shape = (workers, 2, NUM_ROW, NUM_COL)
     action_size = len(config.action_space)
     model = MuZeroNetwork(config)
+    model = torch.compile(model)
     ob1 = torch.rand((workers, PLANE_NUM, NUM_ROW, NUM_COL), dtype=torch.float32)
     ob2 = torch.rand((workers, PLANE_NUM, NUM_ROW, NUM_COL), dtype=torch.float32)
     (

@@ -98,17 +98,18 @@ class MuZeroConfig:
         # self.steps_before_train = 100
         # Total number of training steps (ie weights update according to a batch)
         self.batch_size = (
-            256  # Number of parts of games to train on at each training step
+            64  # Number of parts of games to train on at each training step
         )
         # 等待自玩对局累计步数达此标准后才进行训练
         self.steps_before_train = self.batch_size
         # 缓存N自玩对局后报告动态
-        self.buffer_report_interval = 100
+        self.buffer_report_interval = 10
         # 每N次训练后保存检查点
         self.checkpoint_interval = max(
             self.training_steps // 1000, 10
         )  # save checkpoint interval
-        self.test_interval = max(self.checkpoint_interval // 2, 5)
+        # self.test_interval = max(self.checkpoint_interval // 2, 5)
+        self.test_interval = 1000
         # 更新代理模型参数
         self.update_model_interval = max(self.test_interval // 2, 2)
         self.value_loss_weight = 0.25  # Scale the value loss to avoid overfitting of the value function, paper recommends 0.25 (See paper appendix Reanalyze)
@@ -117,11 +118,6 @@ class MuZeroConfig:
         self.optimizer = "SGD"  # "Adam" or "SGD". Paper uses SGD
         self.weight_decay = 1e-4  # L2 weights regularization
         self.momentum = 0.9  # Used only if optimizer is SGD
-
-        # # Exponential learning rate schedule
-        # self.lr_init = 0.002  # Initial learning rate
-        # self.lr_decay_rate = 0.95  # Set it to 1 to use a constant learning rate
-        # self.lr_decay_steps = 500
 
         # 线性递减上下界学习速率
         self.lr_init = 0.003  # Initial learning rate
@@ -135,8 +131,7 @@ class MuZeroConfig:
             5  # Number of game moves to keep for every batch element
         )
         self.td_steps = 5  # Number of steps in the future to take into account for calculating the target value, None for Monte Carlo
-        self.PER = True  # Prioritized Replay (See paper appendix Training), select in priority the elements in the replay buffer which are unexpected for the network
-        # 只要大于0，差异不大
+        self.PER = False  # Prioritized Replay (See paper appendix Training), select in priority the elements in the replay buffer which are unexpected for the network
         self.PER_alpha = 0.5  # How much prioritization is used, 0 corresponding to the uniform case, paper suggests 1
 
         # Reanalyze (See paper appendix Reanalyse)
@@ -158,6 +153,7 @@ class MuZeroConfig:
         self.debug_duration = False  # 是否显示搜索树信息
         self.mcts_fmt = "svg"  # 搜索树文件格式 [svg,png]
         self.restore_from_latest_checkpoint = False  # 如存在最近检查点，则加载模型、优化器、缓存数据
+        self.reset = False  # 除模型参数外，其余恢复至初始训练状态
 
     def visit_softmax_temperature_fn(self, trained_steps):
         """

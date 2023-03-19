@@ -27,7 +27,6 @@ DEFAULS = {
 }
 
 
-# TODO:filelock
 def get_initial_checkpoint(config):
     """获取初始检查点【含模型参数】
 
@@ -56,9 +55,18 @@ def get_current_checkpoint(config):
             checkpoint = torch.load(checkpoint_path)
             key = "weights"
             current_checkpoint[key] = copy.deepcopy(checkpoint[key])
-            for k in checkpoint.keys():
-                if k != key:
-                    current_checkpoint[k] = checkpoint[k]
+            if not config.reset:
+                for k in checkpoint.keys():
+                    if k != key:
+                        current_checkpoint[k] = checkpoint[k]
+            else:
+                print("除模型参数外，其余指标恢复至默认值")
+                for k in checkpoint.keys():
+                    if k == key:
+                        continue
+                    elif k in DEFAULS.keys():
+                        current_checkpoint[k] = DEFAULS.get(k, None)
+                current_checkpoint.update(config.to_dict())
             return current_checkpoint
         else:
             return get_initial_checkpoint(config)

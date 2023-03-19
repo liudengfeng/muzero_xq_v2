@@ -30,6 +30,7 @@ class Trainer:
         # Initialize the network
         self.model = MuZeroNetwork(self.config)
         self.model.to(torch.device("cuda" if self.config.train_on_gpu else "cpu"))
+        self.model = torch.compile(self.model)
         self.model.train()
 
         self.optimizer = torch.optim.SGD(

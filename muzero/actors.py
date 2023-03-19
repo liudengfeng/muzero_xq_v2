@@ -1,15 +1,17 @@
 import copy
+import time
 
 import numpy as np
 import ray
 import torch
 
 from .self_play import SelfPlay, SelfTestPlay
+from .utils import duration_repr
 
 
 @ray.remote
 class SelfPlayActor(SelfPlay):
-    def __init__(self, config, worker_id: int = 1, device="cpu"):
+    def __init__(self, config, worker_id: int = 1):
         super().__init__(config, worker_id)
 
         self.num_played_games = 0
@@ -19,8 +21,7 @@ class SelfPlayActor(SelfPlay):
         np.random.seed(config.seed + (worker_id + 1) * 1000)
         torch.manual_seed(config.seed + (worker_id + 1) * 1000)
 
-        self.device = device
-        self.model.to(device)
+        self.start = time.time()
 
     def __repr__(self):
         return "自玩 on {}(index={:03d})".format(self.device, self.worker_id + 1)
@@ -41,14 +42,18 @@ class SelfPlayActor(SelfPlay):
             replay_buffer.save_game.remote(game_history, shared_storage)
             self.num_played_games += 1
             self.num_played_steps += len(game_history.root_values)
-            print(
-                "played_games {:>7d} played_steps {:>7d} avg length {:.1f}".format(
-                    self.num_played_games,
-                    self.num_played_steps,
-                    self.num_played_steps / self.num_played_games,
-                )
+            duration = time.time() - self.start
+            per_game = duration / self.num_played_games
+            per_step = duration / self.num_played_steps
+            msg = "⏱️ Saved {:>7d} games {:>9d} steps avg length {:.1f} duration {}[{:>6.2f} s/game {:>6.2f} s/step]".format(
+                self.num_played_games,
+                self.num_played_steps,
+                self.num_played_steps / self.num_played_games,
+                duration_repr(duration),
+                per_game,
+                per_step,
             )
-
+            print(msg)
 
 @ray.remote
 class SelfTestPlayActor(SelfTestPlay):

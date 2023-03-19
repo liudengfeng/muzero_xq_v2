@@ -52,7 +52,9 @@ class BaseSelfPlay:
         self.test_mode = test_mode
         self.model_version = 0
 
-        self.model = MuZeroNetwork(self.config)
+        self.model = torch.compile(MuZeroNetwork(self.config))
+        self.device = "cuda" if config.selfplay_on_gpu else "cpu"
+        self.model.to(self.device)
         self.model.eval()
 
         # 管理路径

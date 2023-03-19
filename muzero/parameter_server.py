@@ -14,7 +14,7 @@ class ParameterServer(object):
         np.random.seed(config.seed)
         torch.manual_seed(config.seed)
 
-        self.model = MuZeroNetwork(config)
+        self.model = torch.compile(MuZeroNetwork(config))
         self.optimizer = torch.optim.SGD(
             self.model.parameters(),
             lr=self.config.lr_init,

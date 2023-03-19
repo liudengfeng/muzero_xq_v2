@@ -1,0 +1,9 @@
+@python
+def bar():
+    from muzero.config import MuZeroConfig
+
+    config = MuZeroConfig()
+    print(config.to_dict())
+
+
+bar()
