@@ -102,13 +102,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--runs",
         type=int,
-        default=6,
+        default=8,
         help="Experiment serial number (default: %(default)s)",
     )
     parser.add_argument(
         "--selfplay_on_gpu",
         action="store_true",
-        default=True,
+        default=False,
         help="自玩是否使用GPU (default: %(default)s)",
     )
     # 恢复最近数据
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--training_steps",
         type=int,
-        default=40000,
+        default=4000,
         help="Experiment serial number (default: %(default)s)",
     )
     parser.add_argument(

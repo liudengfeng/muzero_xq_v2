@@ -45,7 +45,7 @@ class SelfPlayActor(SelfPlay):
             duration = time.time() - self.start
             per_game = duration / self.num_played_games
             per_step = duration / self.num_played_steps
-            msg = "⏱️ Saved {:>7d} games {:>9d} steps avg length {:.1f} duration {}[{:>6.2f} s/game {:>6.2f} s/step]".format(
+            msg = "⏱️ Played {:>7d} games {:>9d} steps avg length {:.1f} duration {}[{:>6.2f} s/game {:>6.2f} s/step]".format(
                 self.num_played_games,
                 self.num_played_steps,
                 self.num_played_steps / self.num_played_games,
@@ -55,13 +55,9 @@ class SelfPlayActor(SelfPlay):
             )
             print(msg)
 
+
 @ray.remote
 class SelfTestPlayActor(SelfTestPlay):
-    def __init__(self, config, worker_id: int = 1, device="cpu"):
-        super().__init__(config, worker_id)
-        self.device = device
-        self.model.to(device)
-
     def __repr__(self):
         return "测试 on {}(index={:03d})".format(self.device, self.worker_id + 1)
 

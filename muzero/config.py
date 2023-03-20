@@ -47,7 +47,8 @@ class MuZeroConfig:
 
         ### Self-Play
         self.num_workers = 16  # Number of simultaneous threads/workers self-playing to feed the replay buffer
-        self.selfplay_on_gpu = True
+        # 比较 gpu 与 cpu 速度
+        self.selfplay_on_gpu = False
         self.max_moves = 200  # Maximum number of moves if game is not finished before
         # CPU串行模拟240次45s
         # GPU速度慢
@@ -111,7 +112,8 @@ class MuZeroConfig:
         # self.test_interval = max(self.checkpoint_interval // 2, 5)
         self.test_interval = 1000
         # 更新代理模型参数
-        self.update_model_interval = max(self.test_interval // 2, 2)
+        # self.update_model_interval = max(self.test_interval // 2, 2)
+        self.update_model_interval = 100
         self.value_loss_weight = 0.25  # Scale the value loss to avoid overfitting of the value function, paper recommends 0.25 (See paper appendix Reanalyze)
         self.train_on_gpu = torch.cuda.is_available()  # Train on GPU if available
 
