@@ -10,9 +10,10 @@ config.restore_from_latest_checkpoint = True
 print(initial_inference(config))
 
 start = time.time()
-config.num_simulations = 240
-moves = ["2737", "3839", "3738", "3949"]
-action = get_muzero_action(config, moves)
+config.num_simulations = 30
+# moves = ["2737", "3839", "3738", "3949"]
+# action = get_muzero_action(config, moves)
+action = get_muzero_action(config, [])
 print(
     "Mcts tree search move = {} duration = {:.2f}s".format(
         xqcpp.a2m(action), time.time() - start

@@ -99,7 +99,7 @@ class MuZeroConfig:
         # self.steps_before_train = 100
         # Total number of training steps (ie weights update according to a batch)
         self.batch_size = (
-            64  # Number of parts of games to train on at each training step
+            128  # Number of parts of games to train on at each training step
         )
         # 等待自玩对局累计步数达此标准后才进行训练
         self.steps_before_train = self.batch_size

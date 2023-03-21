@@ -3,8 +3,10 @@ from pstats import SortKey
 import torch
 import numpy as np
 from muzero.config import MuZeroConfig
-from muzero.models import MuZeroNetwork
+
+# from muzero.models import MuZeroNetwork
 from muzero.mcts import MCTS
+from muzero.apply import get_pretrained_model
 
 # torch.backends.cudnn.benchmark = True
 
@@ -14,18 +16,20 @@ np.random.seed(config.seed)
 torch.manual_seed(config.seed)
 
 config.num_simulations = 60
-model = MuZeroNetwork(config)
-# model.to("cuda")
-model.eval()
+config.runs = 5
+model = get_pretrained_model(config)
+model.to("cuda")
+# model.eval()
 
 
 def test():
     with torch.no_grad():
-        observations = np.random.random((1, 17, 10, 9)).astype(np.float32)
-        legal_actions = np.random.randint(2086, size=60).tolist()
-        root, extra_info = MCTS(config).run(
-            model, observations, legal_actions, 1, True
-        )
+        for _ in range(10):
+            observations = np.random.random((1, 15, 10, 9)).astype(np.float32)
+            legal_actions = np.random.randint(2086, size=60).tolist()
+            root, extra_info = MCTS(config).run(
+                model, observations, legal_actions, 1, True
+            )
         print(extra_info)
 
 

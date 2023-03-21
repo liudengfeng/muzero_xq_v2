@@ -96,13 +96,13 @@ if __name__ == "__main__":
         "--num_workers",
         type=int,
         # default=os.cpu_count() - 2,
-        default=7,
+        default=9,
         help="Number of self play actors running concurrently (default: %(default)s)",
     )
     parser.add_argument(
         "--runs",
         type=int,
-        default=8,
+        default=9,
         help="Experiment serial number (default: %(default)s)",
     )
     parser.add_argument(
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--training_steps",
         type=int,
-        default=4000,
+        default=80000,
         help="Experiment serial number (default: %(default)s)",
     )
     parser.add_argument(

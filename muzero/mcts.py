@@ -438,7 +438,7 @@ class MCTS:
         assert set(legal_actions).issubset(
             set(self.config.action_space)
         ), "Legal actions should be a subset of the action space."
-        
+
         root.expand(
             legal_actions,
             to_play,
