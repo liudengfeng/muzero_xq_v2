@@ -102,7 +102,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--runs",
         type=int,
-        default=9,
+        default=10,
         help="Experiment serial number (default: %(default)s)",
     )
     parser.add_argument(
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--training_steps",
         type=int,
-        default=80000,
+        default=200000,
         help="Experiment serial number (default: %(default)s)",
     )
     parser.add_argument(
