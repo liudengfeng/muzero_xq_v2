@@ -137,3 +137,4 @@ temp*.*
 *.checkpoint
 report.html
 demo_mcts_tree/
+parallel.json
