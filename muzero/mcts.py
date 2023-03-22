@@ -85,31 +85,18 @@ class Node:
             policy = policy_logits
 
         self.policy = policy
-
+        for action, p in policy.items():
+            # 添加概率限制
+            if p > 0.0:
+                c = Node(p)
+                c.to_play = BLACK_PLAYER if self.to_play == RED_PLAYER else RED_PLAYER
+                c.action = xqcpp.a2m(action)
+                c.path_ = "{} -> {}".format(self.path(), c.action)
+                self.children[action] = c
         if debug:
             # 调试模式需要与父节点链接
-            for action, p in policy.items():
-                # 添加概率限制
-                if p > 0.0:
-                    c = Node(p)
-                    c.parent = self
-                    c.to_play = (
-                        BLACK_PLAYER if self.to_play == RED_PLAYER else RED_PLAYER
-                    )
-                    c.action = xqcpp.a2m(action)
-                    c.path_ = "{} -> {}".format(c.parent.path(), c.action)
-                    self.children[action] = c
-        else:
-            for action, p in policy.items():
-                # 添加概率限制
-                if p > 0.0:
-                    c = Node(p)
-                    c.to_play = (
-                        BLACK_PLAYER if self.to_play == RED_PLAYER else RED_PLAYER
-                    )
-                    c.action = xqcpp.a2m(action)
-                    c.path_ = "{} -> {}".format(self.path(), c.action)
-                    self.children[action] = c
+            for c in self.children.values():
+                c.parent = self
 
     def add_exploration_noise(self, dirichlet_alpha, exploration_fraction):
         """
@@ -314,7 +301,7 @@ class MinMaxStats:
         return value
 
 
-def ucb_score(parent, child, min_max_stats, config):
+def ucb_score_fn(parent, child, min_max_stats, config):
     """
     The score for a node is based on its value, plus an exploration bonus based on the prior.
     """
@@ -342,7 +329,7 @@ def ucb_score(parent, child, min_max_stats, config):
 def select_child(node, min_max_stats, config):
     # 简化计算量
     kvs = {
-        action: ucb_score(node, child, min_max_stats, config)
+        action: ucb_score_fn(node, child, min_max_stats, config)
         for action, child in node.children.items()
     }
     # 更新ucb得分
