@@ -5,7 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${vcpkgRoot}/x64-linux/include",
-                "/home/ldf/libtorch/include"
+                "~/libtorch/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
