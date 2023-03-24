@@ -57,8 +57,6 @@ class Reanalyse:
                 [
                     game_history.get_stacked_observations(
                         i,
-                        self.config.stacked_observations,
-                        len(self.config.action_space),
                     )
                     for i in range(len(game_history.root_values))
                 ]
@@ -70,7 +68,7 @@ class Reanalyse:
                 .to(next(self.model.parameters()).device)
             )
 
-            values = self.model.initial_inference(observations)
+            values, _, _, _ = self.model.initial_inference(observations)
 
             game_history.reanalysed_predicted_root_values = (
                 values.detach().cpu().numpy()
