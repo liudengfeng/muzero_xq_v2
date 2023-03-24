@@ -27,7 +27,7 @@ import coloredlogs
 import ray
 from muzero.utils import duration_repr
 from muzero.config import MuZeroConfig
-from muzero.replay_buffer import ReplayBuffer
+from muzero.replay_buffer import ReplayBuffer, Reanalyse
 from muzero.shared_storage import SharedStorage
 from muzero.trainer import Trainer
 from muzero.actors import SelfPlayActor, SelfTestPlayActor
@@ -37,18 +37,22 @@ def train(logger, config: MuZeroConfig):
     gpu_on_trainer = 1.0
     gpu_on_selfplayer = 0.0
     if config.selfplay_on_gpu:
-        gpu_on_trainer = 0.25
+        gpu_on_trainer = 0.20
+        total = config.num_workers
+        if config.use_test:
+            total += 1
+        if config.use_reanalyse:
+            total += 1
         # 略微存在损失
-        gpu_on_selfplayer = (
-            math.floor((1 - gpu_on_trainer) / (config.num_workers + 1) * 1000) / 1000.0
-        )
-
+        gpu_on_selfplayer = math.floor((1 - gpu_on_trainer) / total * 1000) / 1000.0
     # logger.info(f"每个自玩分配 {gpu_on_selfplayer:.3f} GPU，训练器分配 {gpu_on_trainer:.3f} GPU")
 
     shared_storage = SharedStorage.remote(config)
     replay_buffer = ReplayBuffer.remote(config)
 
     test_worker = SelfTestPlayActor.options(num_gpus=gpu_on_selfplayer).remote(config)
+
+    reanalyse_worker = Reanalyse.options(num_gpus=gpu_on_selfplayer).remote(config)
 
     self_players = [
         SelfPlayActor.options(num_gpus=gpu_on_selfplayer).remote(config, i)
@@ -62,7 +66,11 @@ def train(logger, config: MuZeroConfig):
         trainer.continuous_update_weights.remote(replay_buffer, shared_storage)
     ]
 
-    result_refs.append(test_worker.continuous_self_play.remote(shared_storage))
+    if config.use_test:
+        result_refs.append(test_worker.continuous_self_play.remote(shared_storage))
+    
+    if config.use_reanalyse:
+        result_refs.append(reanalyse_worker.reanalyse.remote(replay_buffer, shared_storage))
 
     for worker in self_players:
         result_refs.append(
@@ -96,13 +104,13 @@ if __name__ == "__main__":
         "--num_workers",
         type=int,
         # default=os.cpu_count() - 2,
-        default=9,
+        default=8,
         help="Number of self play actors running concurrently (default: %(default)s)",
     )
     parser.add_argument(
         "--runs",
         type=int,
-        default=10,
+        default=11,
         help="Experiment serial number (default: %(default)s)",
     )
     parser.add_argument(
@@ -122,7 +130,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--training_steps",
         type=int,
-        default=200000,
+        default=40000,
         help="Experiment serial number (default: %(default)s)",
     )
     parser.add_argument(
@@ -130,6 +138,18 @@ if __name__ == "__main__":
         type=int,
         default=240,
         help="Experiment serial number (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--use_test",
+        action="store_true",
+        default=True,
+        help="训练中是否测试。(default: %(default)s)",
+    )
+    parser.add_argument(
+        "--use_reanalyse",
+        action="store_true",
+        default=True,
+        help="训练中是否再分析。(default: %(default)s)",
     )
     parser.add_argument(
         "--debug_mcts",
