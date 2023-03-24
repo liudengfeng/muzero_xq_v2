@@ -1,6 +1,7 @@
 #include "mcts.hpp"
 
-std::vector<torch::Tensor> infer(std::string model_path, torch::Tensor features)
+// std::vector<torch::Tensor> infer(std::string model_path, torch::Tensor features)
+torch::jit::script::Module infer(std::string model_path)
 {
     torch::jit::script::Module module;
     try
@@ -12,5 +13,6 @@ std::vector<torch::Tensor> infer(std::string model_path, torch::Tensor features)
     {
         std::cerr << "error loading the model\n";
     }
-    return module.initial_inference(features);
+    // return module.initial_inference(features);
+    return module;
 }

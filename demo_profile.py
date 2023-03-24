@@ -16,9 +16,9 @@ np.random.seed(config.seed)
 torch.manual_seed(config.seed)
 
 config.num_simulations = 60
-config.runs = 5
+config.runs = 9
 model = get_pretrained_model(config)
-model.to("cuda")
+# model.to("cuda")
 # model.eval()
 
 
