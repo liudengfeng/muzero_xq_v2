@@ -45,7 +45,8 @@ def train(logger, config: MuZeroConfig):
             total += 1
         # 略微存在损失
         gpu_on_selfplayer = math.floor((1 - gpu_on_trainer) / total * 1000) / 1000.0
-    # logger.info(f"每个自玩分配 {gpu_on_selfplayer:.3f} GPU，训练器分配 {gpu_on_trainer:.3f} GPU")
+
+    logger.info(f"每个自玩分配 {gpu_on_selfplayer:.3f} GPU，训练器分配 {gpu_on_trainer:.3f} GPU")
 
     shared_storage = SharedStorage.remote(config)
     replay_buffer = ReplayBuffer.remote(config)
@@ -68,9 +69,13 @@ def train(logger, config: MuZeroConfig):
 
     if config.use_test:
         result_refs.append(test_worker.continuous_self_play.remote(shared_storage))
-    
+        logger.info("use test")
+
     if config.use_reanalyse:
-        result_refs.append(reanalyse_worker.reanalyse.remote(replay_buffer, shared_storage))
+        result_refs.append(
+            reanalyse_worker.reanalyse.remote(replay_buffer, shared_storage)
+        )
+        logger.info("use reanalyse")
 
     for worker in self_players:
         result_refs.append(

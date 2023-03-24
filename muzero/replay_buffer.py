@@ -53,29 +53,28 @@ class Reanalyse:
             )
 
             # Use the last model to provide a fresher, stable n-step value (See paper appendix Reanalyze)
-            if self.config.use_last_model_value:
-                observations = np.array(
-                    [
-                        game_history.get_stacked_observations(
-                            i,
-                            self.config.stacked_observations,
-                            len(self.config.action_space),
-                        )
-                        for i in range(len(game_history.root_values))
-                    ]
-                )
+            observations = np.array(
+                [
+                    game_history.get_stacked_observations(
+                        i,
+                        self.config.stacked_observations,
+                        len(self.config.action_space),
+                    )
+                    for i in range(len(game_history.root_values))
+                ]
+            )
 
-                observations = (
-                    torch.tensor(observations)
-                    .float()
-                    .to(next(self.model.parameters()).device)
-                )
+            observations = (
+                torch.tensor(observations)
+                .float()
+                .to(next(self.model.parameters()).device)
+            )
 
-                values = self.model.initial_inference(observations)
+            values = self.model.initial_inference(observations)
 
-                game_history.reanalysed_predicted_root_values = (
-                    values.detach().cpu().numpy()
-                )
+            game_history.reanalysed_predicted_root_values = (
+                values.detach().cpu().numpy()
+            )
 
             replay_buffer.update_game_history.remote(game_id, game_history)
             self.num_reanalysed_games += 1
