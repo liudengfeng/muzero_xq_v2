@@ -92,9 +92,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--init_fen",
         type=str,
-        default="3k5/2P1P4/9/9/9/9/9/9/4p1p2/5K3 r - 100 0 190",
+        # default="3k5/2P1P4/9/9/9/9/9/9/4p1p2/5K3 r - 100 0 190",
         # 车马兵类
-        # default=f"2b6/3ka4/2Pa5/3N5/9/3R5/9/9/5pr2/3AK4 r - {120-rem_steps} 0 {200-rem_steps}",
+        default=f"2b6/3ka4/2Pa5/3N5/9/3R5/9/9/5pr2/3AK4 r - {120-rem_steps} 0 {200-rem_steps}",
         # 里应外合
         # default=f"3k1a3/4PP3/3a5/9/9/9/5C3/3A1p3/3p1pr2/4K4 r - {120-rem_steps} 0 {200-rem_steps}",
         # 【2步杀】
@@ -135,13 +135,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--training_steps",
         type=int,
-        default=4000,
+        default=100000,
         help="Experiment serial number (default: %(default)s)",
     )
     parser.add_argument(
         "--num_simulations",
         type=int,
-        default=30,
+        default=120,
         help="Experiment serial number (default: %(default)s)",
     )
     parser.add_argument(
