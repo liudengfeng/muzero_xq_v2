@@ -9,8 +9,7 @@ from gymxq.constants import (
 import torch
 
 # 棋盘特征
-# PLANE_NUM = 17
-PLANE_NUM = 15
+PLANE_NUM = 17
 STACKED_NUM = 1
 
 
@@ -113,7 +112,7 @@ class MuZeroConfig:
         self.test_interval = 1000
         # 更新代理模型参数
         # self.update_model_interval = max(self.test_interval // 2, 2)
-        self.update_model_interval = 100
+        self.update_model_interval = 1
         self.value_loss_weight = 0.25  # Scale the value loss to avoid overfitting of the value function, paper recommends 0.25 (See paper appendix Reanalyze)
         self.train_on_gpu = torch.cuda.is_available()  # Train on GPU if available
 
@@ -123,7 +122,7 @@ class MuZeroConfig:
 
         # 线性递减上下界学习速率
         self.lr_init = 0.003  # Initial learning rate
-        self.lr_end = 0.0003  # Set it to 1 to use a constant learning rate
+        self.lr_end = 0.0001  # Set it to 1 to use a constant learning rate
 
         ### Replay Buffer
         self.replay_buffer_size = int(

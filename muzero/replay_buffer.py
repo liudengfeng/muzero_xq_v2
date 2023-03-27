@@ -53,7 +53,7 @@ class Reanalyse:
             )
 
             # Use the last model to provide a fresher, stable n-step value (See paper appendix Reanalyze)
-            observations = np.array(
+            observations = np.concatenate(
                 [
                     game_history.get_stacked_observations(
                         i,

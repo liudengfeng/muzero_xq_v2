@@ -1,16 +1,19 @@
+import os
+
 import numpy as np
 import pytest
 import xqcpp
-from gymxq.constants import BLACK_PLAYER, NUM_ACTIONS, RED_PLAYER, NUM_COL, NUM_ROW
+from gymxq.constants import BLACK_PLAYER, NUM_ACTIONS, NUM_COL, NUM_ROW, RED_PLAYER
 
+from muzero.config import PLANE_NUM, MuZeroConfig
+from muzero.mcts import GameHistory, MinMaxStats, Node, backpropagate, render_root
+from muzero.path_utils import get_experiment_path
 from muzero.replay_buffer_utils import (
     Buffer,
     make_target,
     sample_position,
     update_gamehistory_priorities,
 )
-from muzero.config import MuZeroConfig, PLANE_NUM
-from muzero.mcts import GameHistory, Node, backpropagate, MinMaxStats, render_root
 
 
 def fake_observation_history(n):
@@ -131,3 +134,30 @@ def test_buffer():
         gradient_scale_batch,
     ) = buffer.get_batch()
     assert weight_batch.shape == (config.batch_size,)
+
+
+def test_absorb():
+    config = MuZeroConfig()
+    config.runs = 11
+    buffer = Buffer(config)
+    root = get_experiment_path(config.runs)
+    f_path = os.path.join(root, "buffer.pkl")
+    if os.path.exists(f_path):
+        buffer.load_buffer(f_path)
+    moves = ["2737", "3837", "3657"]
+    e_actions = [NUM_ACTIONS] + [xqcpp.m2a(m) for m in moves]
+    while True:
+        gid, gh, prob = buffer.sample_game()
+        if gh.action_history == e_actions:
+            break
+    idx = len(gh.root_values) - 1
+    target_values, target_rewards, target_policies, actions = make_target(
+        gh, idx, config, False
+    )
+    last_action = e_actions[-1]
+    assert all([a == last_action for a in actions])
+    for p in target_policies:
+        np.testing.assert_almost_equal(sum(p), 1.0)
+        p[last_action] == 1.0
+    assert target_values[0] == 1.0
+    assert target_rewards[1] == 1.0

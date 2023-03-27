@@ -11,7 +11,7 @@ from muzero.trainer_utils import loss_function
 @pytest.mark.parametrize(
     "expected",
     [
-        ([0.012, 0.071, -0.094, -0.013, -0.107, 0.04, -0.096, -0.007]),
+        ([-0.011, 0.063, -0.03, 0.052, 0.133, -0.156, 0.1, 0.002]),
     ],
 )
 def test_inference(expected):

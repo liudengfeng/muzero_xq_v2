@@ -127,6 +127,7 @@ def encoded_action(action: int, lr: bool = False):
 def concatenated_feature(
     state,
     p,
+    last_action: int,
     lr: bool = False,
 ):
     """棋局合并特征
@@ -141,6 +142,7 @@ def concatenated_feature(
     res = np.concatenate(
         (
             state if not lr else np.fliplr(state),
+            encoded_action(last_action, lr),
             # np.full((1, NUM_ROW, NUM_COL), steps) / MAX_EPISODE_STEPS,
             # np.full((1, NUM_ROW, NUM_COL), e) / MAX_NUM_NO_EAT,
             np.full((1, NUM_ROW, NUM_COL), p) / NUM_PLAYER,
@@ -151,10 +153,11 @@ def concatenated_feature(
     return res
 
 
-def obs2feature(obs_dict: dict, lr: bool = False, flatten: bool = True):
+def obs2feature(obs_dict: dict, info: dict, lr: bool = False, flatten: bool = True):
     """棋局特征
     Args:
         obs_dict (dict): 棋局特征字典
+        info (dict): 信息字典
         lr (bool, optional): 是否左右互换. Defaults to False.
         flatten (bool, optional): 是否展开为2维数组. Defaults to True.
     Returns:
@@ -170,16 +173,18 @@ def obs2feature(obs_dict: dict, lr: bool = False, flatten: bool = True):
         # steps = obs_dict["steps"]
         # e = obs_dict["continuous_uneaten"]
         p = obs_dict["to_play"]
+        last_action = info["last_action"]
         # res[0] = concatenated_feature(state, steps, e, p, lr)
-        res[0] = concatenated_feature(state, p, lr)
+        res[0] = concatenated_feature(state, p, last_action, lr)
     else:
         for i in range(n):
             state = ps2feature(obs_dict["s"][i])
             # steps = obs_dict["steps"][i]
             # e = obs_dict["continuous_uneaten"][i]
             p = obs_dict["to_play"][i]
+            last_action = info["last_action"][i]
             # res[i] = concatenated_feature(state, steps, e, p, lr)
-            res[i] = concatenated_feature(state, p, lr)
+            res[i] = concatenated_feature(state, p, last_action, lr)
     if flatten:
         return res.reshape((n, -1))
     else:

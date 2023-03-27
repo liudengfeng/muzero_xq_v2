@@ -9,7 +9,7 @@ import numpy as np
 
 def stack_observation(observations, infos):
     stacked = observations.copy()
-    keys = ["to_play", "legal_actions"]
+    keys = ["to_play", "legal_actions", "last_action"]
     for key in keys:
         stacked[key] = infos[key]
     return stacked

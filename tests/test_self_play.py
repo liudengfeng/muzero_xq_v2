@@ -28,7 +28,7 @@ def test_selfplay(environment_factory, mcts_factory, init_fen, min_root, max_roo
     environment = environment_factory(config.init_fen, True)
 
     obs, info = environment.reset()
-    observation = obs2feature(obs, flatten=False)
+    observation = obs2feature(obs, info, flatten=False)
     game_history.observation_history.append(observation)
     to_play = info["to_play"]
     game_history.to_play_history.append(to_play)
@@ -49,7 +49,7 @@ def test_selfplay(environment_factory, mcts_factory, init_fen, min_root, max_roo
 
         episode_steps += 1
 
-        observation = obs2feature(obs, flatten=False)
+        observation = obs2feature(obs, info, flatten=False)
 
         game_history.store_search_statistics(root, config.action_space)
 

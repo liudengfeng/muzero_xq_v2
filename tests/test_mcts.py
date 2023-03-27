@@ -22,7 +22,7 @@ def test_game_histroy(moves, expected_len):
     actions = [xqcpp.m2a(m) for m in moves]
     game_history = GameHistory()
     obs, info = environment.reset()
-    observation = obs2feature(obs, flatten=False)
+    observation = obs2feature(obs, info, flatten=False)
     game_history.observation_history.append(observation)
     to_play = info["to_play"]
     game_history.to_play_history.append(to_play)
@@ -33,7 +33,7 @@ def test_game_histroy(moves, expected_len):
         action = actions[i]
         obs, reward, termination, truncation, info = environment.step(action)
 
-        observation = obs2feature(obs, flatten=False)
+        observation = obs2feature(obs, info, flatten=False)
 
         game_history.child_visits.append(0)
         game_history.root_values.append(0)

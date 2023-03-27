@@ -75,7 +75,7 @@ class BaseSelfPlay:
 
         game_history = GameHistory()
         obs, info = self.environment.reset()
-        observation = obs2feature(obs, flatten=False)
+        observation = obs2feature(obs, info, flatten=False)
         # last_a = game_history.action_history[-1]
         # observation = np.concatenate(
         #     [encoded_action(last_a)[np.newaxis, :], observation], axis=1
@@ -141,7 +141,6 @@ class BaseSelfPlay:
                     action
                 )
 
-                # TODO:删除
                 if not self.test_mode and reward == 1:
                     print(self.environment.render())
                     import xqcpp
@@ -153,7 +152,7 @@ class BaseSelfPlay:
 
                 episode_steps += 1
 
-                observation = obs2feature(obs, flatten=False)
+                observation = obs2feature(obs, info, flatten=False)
 
                 # last_a = game_history.action_history[-1]
                 # observation = np.concatenate(
